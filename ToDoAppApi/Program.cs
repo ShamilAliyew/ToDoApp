@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using System;
+using ToDoAppApi.Data;
+using ToDoAppApi.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +12,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<ToDoAppDbContext>(options =>
+   options.UseMySQL("server=localhost;database=todoappdb;user=root;password=girish404;"));
+
+builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

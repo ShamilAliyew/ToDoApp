@@ -1,6 +1,9 @@
 ﻿namespace ToDoAppApi.Enums
 {
-    public class TodoPriority
+    public enum Priority
     {
+        Low,
+        Medium,
+        High
     }
 }

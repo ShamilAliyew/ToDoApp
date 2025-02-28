@@ -2,33 +2,45 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ToDoAppApi.Models
+[Index(nameof(Username), IsUnique = true)] 
+[Index(nameof(Email), IsUnique = true)]
+public class User
 {
-    [Table("User")]
-    [Index(nameof(Username), IsUnique = true)]
-    public class User
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [Required]
-        [MaxLength(50)]
-        public string FirstName { get; set; }
-        [Required]
-        [MaxLength(50)]
-        public string LastName{get; set;}
-        [Required]
-        [MaxLength(50)]
-        public string Username { get; set; }
-        [Required]
-        [MinLength(6)]
-        public string Password { get; set; }
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-        [Required]
-        public DateTime RegisteredDate { get; set; }
-        public bool IsActive { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Column("id")]
+    public int Id { get; set; }
 
-    }
+    [Required]
+    [MaxLength(50)]
+    [Column("first_name")]
+    public string FirstName { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Column("last_name")]
+    public string LastName { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Column("username")]
+    public string Username { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Column("password")]
+    public string Password { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Column("email")]
+    public string Email { get; set; }
+    [Column("registered_date", TypeName = "DATETIME")]
+    public DateTime RegisteredDate { get; set; } = DateTime.UtcNow;
+    [Column("is_deleted")]
+    public bool IsDeleted { get; set; } = false;
+
+   
+    public ICollection<Category> Categories { get; set; }
+    public ICollection<Todo> Todos { get; set; }
 }
