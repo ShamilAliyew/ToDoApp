@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ToDoAppApi.Enums;
 
+[Table("todos")]
 public class Todo
 {
     [Key]

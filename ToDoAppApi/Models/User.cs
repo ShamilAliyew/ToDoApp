@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+[Table("users")]
 [Index(nameof(Username), IsUnique = true)] 
 [Index(nameof(Email), IsUnique = true)]
 public class User
@@ -27,7 +28,7 @@ public class User
     public string Username { get; set; }
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     [Column("password")]
     public string Password { get; set; }
 
@@ -41,6 +42,6 @@ public class User
     public bool IsDeleted { get; set; } = false;
 
    
-    public ICollection<Category> Categories { get; set; }
-    public ICollection<Todo> Todos { get; set; }
+    public ICollection<Category> Categories { get; set; }=new List<Category>();
+    public ICollection<Todo> Todos { get; set; }= new List<Todo>();
 }

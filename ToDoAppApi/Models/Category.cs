@@ -2,7 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Index(nameof(CategoryName), IsUnique =true)]
+[Table("categories")]
+
 public class Category
 {
     [Key]
@@ -11,7 +12,7 @@ public class Category
     public int Id { get; set; }
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     [Column("category_name")]
     public string CategoryName { get; set; }
     [Column("is_deleted")]
@@ -20,7 +21,7 @@ public class Category
     [Column("user_id")]
     public int? UserId { get; set; }
     [ForeignKey("UserId")]
-    public User User { get; set; }
+    public virtual User User { get; set; }
 
     
     public ICollection<Todo> Todos { get; set; }

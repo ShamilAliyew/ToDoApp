@@ -32,6 +32,23 @@ namespace ToDoAppApi.Controllers
             }
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]UserLoginDTO userLoginDTO)
+        {
+            if(userLoginDTO == null)
+            {
+                throw new Exception("Information cannot be empty.");
+            }
+            try
+            {
+                var user = await _userService.LoginAsync(userLoginDTO.identifier, userLoginDTO.password);
+                return Ok(user);
+            }catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
 
 
 

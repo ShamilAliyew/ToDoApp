@@ -10,21 +10,21 @@ namespace ToDoAppApi.Services
 {
     public class UserService : IUserService
     {
-        private readonly ToDoAppDbContext _context;
+        private readonly ToDoAppDbContext _DbContext;
 
         public UserService(ToDoAppDbContext context)
         {
-            _context = context;
+            _DbContext = context;
         }
 
         public async Task<UserResponseDTO> AddUserAsync(UserDTO userDto)
         {
-            // Email və Username mövcuddurmu?  
-            bool isUserExists = await _context.Users.AnyAsync(u => u.Email == userDto.Email || u.Username == userDto.Username);
+              
+            bool isUserExists = await _DbContext.Users.AnyAsync(u => u.Email == userDto.Email || u.Username == userDto.Username);
 
             if (isUserExists)
             {
-                throw new Exception("Bu email və ya username artıq mövcuddur!");
+                throw new Exception("This email or username already exists!");
             }
 
             var user = new User
@@ -32,13 +32,25 @@ namespace ToDoAppApi.Services
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
                 Username = userDto.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password), 
-                Email = userDto.Email
+                Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
+                Email = userDto.Email,
+                RegisteredDate = DateTime.UtcNow
             };
-
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
+            try
+            {
+                await _DbContext.Users.AddAsync(user);
+                await _DbContext.SaveChangesAsync();
+            }catch (Exception ex)
+            {
+                if(ex.InnerException != null)
+    {
+                    throw new Exception($"Inner Exception: {ex.InnerException.Message}", ex.InnerException);
+                }
+    else
+                {
+                    throw;
+                }
+            }
             return new UserResponseDTO
             {
                 FirstName = user.FirstName,
@@ -48,5 +60,26 @@ namespace ToDoAppApi.Services
             };
         }
 
+        public async Task<UserResponseDTO> LoginAsync(string identifier, string password)
+        {
+            var user = await _DbContext.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
+            if(user==null || !VerifyPassword(password, user.Password))
+            {
+                throw new Exception("Invalid Email of Username");
+            }
+            return new UserResponseDTO
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Email = user.Email
+            }; 
+        }
+
+        public bool VerifyPassword(string enteredPassword, string hashPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(enteredPassword , hashPassword);
+
+        }
     }
 }

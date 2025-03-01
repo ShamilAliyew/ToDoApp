@@ -12,10 +12,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ToDoAppDbContext>(options =>
-   options.UseMySQL("server=localhost;database=todoappdb;user=root;password=girish404;"));
+var connectionString = builder.Configuration.GetConnectionString("MysqlConnection");
 
+
+builder.Services.AddDbContext<ToDoAppDbContext>(options =>
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 40))));
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+
 var app = builder.Build();
 
 
