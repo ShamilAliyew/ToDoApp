@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 [Table("users")]
 [Index(nameof(Username), IsUnique = true)] 
 [Index(nameof(Email), IsUnique = true)]
@@ -37,11 +38,13 @@ public class User
     [Column("email")]
     public string Email { get; set; }
     [Column("registered_date", TypeName = "DATETIME")]
-    public DateTime RegisteredDate { get; set; } = DateTime.UtcNow;
+    public DateTime RegisteredDate { get; set; } = DateTime.Now;
     [Column("is_deleted")]
     public bool IsDeleted { get; set; } = false;
 
    
-    public ICollection<Category> Categories { get; set; }=new List<Category>();
+    
     public ICollection<Todo> Todos { get; set; }= new List<Todo>();
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
+
 }

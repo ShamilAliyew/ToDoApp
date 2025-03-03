@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToDoAppApi.Data;
 using ToDoAppApi.DTOs;
 using ToDoAppApi.Services;
@@ -19,7 +20,7 @@ namespace ToDoAppApi.Controllers
 
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddUser([FromBody] UserDTO userDto)
+        public async Task<ActionResult<User>> AddUser([FromBody] UserDTO userDto)
         {
             try
             {
@@ -33,7 +34,7 @@ namespace ToDoAppApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]UserLoginDTO userLoginDTO)
+        public async Task<ActionResult<User>> Login([FromBody] UserLoginDTO userLoginDTO)
         {
             if(userLoginDTO == null)
             {
@@ -48,6 +49,19 @@ namespace ToDoAppApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<User>> GetUserById(int userId)
+        {
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+            return Ok(user);
+        }
+
 
 
 

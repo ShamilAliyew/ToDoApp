@@ -1,9 +1,5 @@
-﻿
-using System.Diagnostics.Metrics;
-using System;
-using ToDoAppApi.Data;
+﻿using ToDoAppApi.Data;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Crypto.Generators;
 using ToDoAppApi.DTOs;
 
 namespace ToDoAppApi.Services
@@ -17,7 +13,7 @@ namespace ToDoAppApi.Services
             _DbContext = context;
         }
 
-        public async Task<UserResponseDTO> AddUserAsync(UserDTO userDto)
+        public async Task<User> AddUserAsync(UserDTO userDto)
         {
               
             bool isUserExists = await _DbContext.Users.AnyAsync(u => u.Email == userDto.Email || u.Username == userDto.Username);
@@ -40,40 +36,37 @@ namespace ToDoAppApi.Services
             {
                 await _DbContext.Users.AddAsync(user);
                 await _DbContext.SaveChangesAsync();
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                if(ex.InnerException != null)
-    {
+                if (ex.InnerException != null)
+                {
                     throw new Exception($"Inner Exception: {ex.InnerException.Message}", ex.InnerException);
                 }
-    else
+                else
                 {
                     throw;
                 }
             }
-            return new UserResponseDTO
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Username = user.Username,
-                Email = user.Email
-            };
+      
+            return user;
+            
         }
 
-        public async Task<UserResponseDTO> LoginAsync(string identifier, string password)
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            var user = await _DbContext.Users.FindAsync(id);
+            return user;
+        }
+
+        public async Task<User> LoginAsync(string identifier, string password)
         {
             var user = await _DbContext.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
             if(user==null || !VerifyPassword(password, user.Password))
             {
                 throw new Exception("Invalid Email of Username");
             }
-            return new UserResponseDTO
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Username = user.Username,
-                Email = user.Email
-            }; 
+            return user;
         }
 
         public bool VerifyPassword(string enteredPassword, string hashPassword)

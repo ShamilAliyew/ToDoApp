@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("categories")]
-
 public class Category
 {
     [Key]
@@ -17,12 +16,12 @@ public class Category
     public string CategoryName { get; set; }
     [Column("is_deleted")]
     public bool IsDeleted { get; set; } = false;
-
+    [Required]
     [Column("user_id")]
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
     [ForeignKey("UserId")]
     public virtual User User { get; set; }
 
-    
-    public ICollection<Todo> Todos { get; set; }
+    public ICollection<Todo> Todos { get; set; } = new List<Todo>();
+
 }
