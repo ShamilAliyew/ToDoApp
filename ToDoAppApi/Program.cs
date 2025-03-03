@@ -24,6 +24,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ITodoService, TodoService>();
 
 
 var app = builder.Build();

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ToDoAppApi.Enums;
+
 
 [Table("todos")]
 public class Todo
@@ -17,15 +17,8 @@ public class Todo
     public string Title { get; set; }
     [Column("description")]
     public string Description { get; set; }
-
-    [Required]
-    [MaxLength(50)]
-    [Column("priority")]
-    [EnumDataType(typeof(Priority))]
-    public Priority Priority { get; set; }
-    [Column("created_date", TypeName = "DATETIME")]
-
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    [Column("created_date")]
+    public DateTime CreatedDate { get; set; } = DateTime.Now;
     [Column("deadline", TypeName = "DATETIME")]
 
     public DateTime? Deadline { get; set; }

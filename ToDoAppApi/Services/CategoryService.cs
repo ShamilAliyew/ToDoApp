@@ -42,7 +42,7 @@ namespace ToDoAppApi.Services
 
         public async Task<bool> DeleteCategoryAsync(int categoryId)
         {
-            var category = await _DbContext.Categories.FirstOrDefaultAsync(c=>c.Id == categoryId);
+            var category = await _DbContext.Categories.FindAsync(categoryId);
             if(category == null)
             {
                 throw new Exception("Category not found"); 
@@ -54,7 +54,7 @@ namespace ToDoAppApi.Services
             category.IsDeleted = true;
             try
             {
-                _DbContext.Entry(category).State = EntityState.Modified;
+                
                 await _DbContext.SaveChangesAsync();
                 
             }
