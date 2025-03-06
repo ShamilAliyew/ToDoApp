@@ -1,4 +1,5 @@
 ﻿import React, { useState } from 'react';
+import '../styles/SignUp.css';
 
 function SignUp() {
     const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ function SignUp() {
         e.preventDefault();
 
         // API URL-sini buraya əlavə edin (məsələn:)
-        const apiUrl = 'http://localhost:5000/api/User/add';
+        const apiUrl = 'http://localhost:7116/api/User/add';
 
         try {
             const response = await fetch(apiUrl, {
@@ -32,7 +33,7 @@ function SignUp() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData), // Form məlumatlarını JSON şəklində göndəririk
-            });
+            }); 
 
             if (response.ok) {
                 // Məlumat müvəffəqiyyətlə göndərildi
