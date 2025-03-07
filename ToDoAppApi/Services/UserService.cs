@@ -55,7 +55,9 @@ namespace ToDoAppApi.Services
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            var user = await _DbContext.Users.FindAsync(id);
+            var user = await _DbContext.Users
+        .Include(u => u.Categories).Include(u=>u.Todos.Where(t=>t.IsDeleted==false))
+        .FirstOrDefaultAsync(u => u.Id == id);
             return user;
         }
 

@@ -74,5 +74,28 @@ namespace ToDoAppApi.Services
             
            return true;
         }
+
+        public async Task<List<Todo>> GetUserCompletedTodosAsync(int userId)
+        {
+            return await _DbContext.Todos.Where(t => t.IsDeleted == false && t.IsCompleted == true).ToListAsync();
+        }
+
+        public async Task<List<Todo>> GetUserUncompletedTodosAsync(int userId)
+        {
+            return await _DbContext.Todos.Where(t => t.IsDeleted == false && t.IsCompleted == false).ToListAsync();
+        }
+
+        public async Task<bool> UnCompleteTodoAsync(int todoId)
+        {
+            var todo = await _DbContext.Todos.FindAsync(todoId);
+            if (todo == null)
+            {
+                return false;
+            }
+            todo.IsCompleted = false;
+            await _DbContext.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

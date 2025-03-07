@@ -19,7 +19,7 @@ namespace ToDoAppApi.Controllers
         }
 
 
-        [HttpPost("add")]
+        [HttpPost("register")]
         public async Task<ActionResult<User>> AddUser([FromBody] UserDTO userDto)
         {
             try
@@ -50,7 +50,7 @@ namespace ToDoAppApi.Controllers
             }
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("get/{userId}")]
         public async Task<ActionResult<User>> GetUserById(int userId)
         {
             var user = await _userService.GetUserByIdAsync(userId);

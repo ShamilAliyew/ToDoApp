@@ -17,9 +17,9 @@ namespace ToDoAppApi.Controllers
 
         
         [HttpPost("add")]
-        public async Task<ActionResult<Todo>> AddTask([FromBody] TodoDTO todoDto)
+        public async Task<ActionResult<Todo>> AddTask([FromRoute] int userId, [FromRoute] int categoryId, [FromBody] TodoDTO todoDto)
         {
-            var createdTask = await _taskService.AddTodoAsync(todoDto.UserId, todoDto.CategoryId, todoDto.Title, todoDto.Description, todoDto.Deadline);
+            var createdTask = await _taskService.AddTodoAsync(userId, categoryId, todoDto.Title, todoDto.Description, todoDto.Deadline);
             return Ok(createdTask);
         }
 
@@ -30,7 +30,7 @@ namespace ToDoAppApi.Controllers
             return result ? Ok("Task deleted") : NotFound("Task not found");
         }
 
-        [HttpGet("user/{userId}")]
+        [HttpGet("user/alltodos/{userId}")]
         public async Task<ActionResult<List<Todo>>> GetAllTodosByUserId([FromRoute] int userId)
         {
             var todos = await _taskService.GetAllTodosByUserIdAsync(userId);
@@ -47,7 +47,7 @@ namespace ToDoAppApi.Controllers
             return result ? Ok("Task updated") : NotFound("Task not found");
         }
 
-        [HttpPut("{todoId}/complete")]
+        [HttpPut("complete/{todoId}")]
         public async Task<IActionResult> CompleteTodo([FromRoute]int todoId)
         {
             var result = await _taskService.CompleteTodoAsync(todoId);
@@ -56,6 +56,39 @@ namespace ToDoAppApi.Controllers
                 return NotFound("Task not found");
             }
             return Ok("Task completed successfully");
+        }
+
+        [HttpPut("uncomplete/{todoId}")]
+        public async Task<IActionResult> UnCompleteTodo([FromRoute] int todoId)
+        {
+            var result = await _taskService.UnCompleteTodoAsync(todoId);
+            if (!result)
+            {
+                return NotFound("Task not found");
+            }
+            return Ok();
+        }
+
+        [HttpGet("user/completedtodos/{userId}")]
+        public async Task<ActionResult<List<Todo>>> GetUserComppletedTodos([FromRoute] int userId)
+        {
+            var todos = await _taskService.GetUserCompletedTodosAsync(userId);
+            if (todos == null || todos.Count == 0)
+            {
+                return NotFound("No tasks found for this user.");
+            }
+            return Ok(todos);
+        }
+
+        [HttpGet("user/uncompletedtodos/{userId}")]
+        public async Task<ActionResult<List<Todo>>> GetUserUnComppletedTodos([FromRoute] int userId)
+        {
+            var todos = await _taskService.GetUserUncompletedTodosAsync(userId);
+            if (todos == null || todos.Count == 0)
+            {
+                return NotFound("No tasks found for this user.");
+            }
+            return Ok(todos);
         }
     }
 }

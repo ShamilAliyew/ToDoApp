@@ -35,7 +35,7 @@ namespace ToDoAppApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCategory([FromRoute] int id)
         {
             if (id == null)

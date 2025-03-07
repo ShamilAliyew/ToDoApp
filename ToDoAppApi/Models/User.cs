@@ -44,7 +44,7 @@ public class User
 
    
     
-    public ICollection<Todo> Todos { get; set; }= new List<Todo>();
-    public ICollection<Category> Categories { get; set; } = new List<Category>();
+    public virtual ICollection<Todo> Todos { get; set; }= new List<Todo>();
+    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 
 }
