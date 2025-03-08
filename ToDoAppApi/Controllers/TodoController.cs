@@ -19,7 +19,7 @@ namespace ToDoAppApi.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<Todo>> AddTask([FromRoute] int userId, [FromRoute] int categoryId, [FromBody] TodoDTO todoDto)
         {
-            var createdTask = await _taskService.AddTodoAsync(userId, categoryId, todoDto.Title, todoDto.Description, todoDto.Deadline);
+            var createdTask = await _taskService.AddTodoAsync(userId, categoryId, todoDto.Title, todoDto.Description);
             return Ok(createdTask);
         }
 
@@ -43,7 +43,7 @@ namespace ToDoAppApi.Controllers
         [HttpPut("update/{taskId}")]
         public async Task<IActionResult> UpdateTodoDetails([FromRoute]int taskId, [FromBody] UpdateTodoDTO updateTodo)
         {
-            var result = await _taskService.UpdateTodoDetailsAsync(taskId, updateTodo.Title, updateTodo.Description, updateTodo.Deadline);
+            var result = await _taskService.UpdateTodoDetailsAsync(taskId, updateTodo.Title, updateTodo.Description);
             return result ? Ok("Task updated") : NotFound("Task not found");
         }
 

@@ -13,7 +13,7 @@ namespace ToDoAppApi.Services
         {
            _DbContext = DbContext;
         }
-        public async Task<Todo> AddTodoAsync(int userId, int categoryId, string title, string description,  DateTime deadline)
+        public async Task<Todo> AddTodoAsync(int userId, int categoryId, string title, string description)
         {
             var user = await _DbContext.Users.FindAsync(userId);
             var category = await _DbContext.Categories.FindAsync(categoryId);
@@ -26,7 +26,7 @@ namespace ToDoAppApi.Services
                 Category = category,
                 Title = title,
                 Description = description,
-                Deadline = deadline
+                
             };
             await _DbContext.AddAsync(todo);
             await _DbContext.SaveChangesAsync();
@@ -48,14 +48,14 @@ namespace ToDoAppApi.Services
             return await _DbContext.Todos.Where(t => t.UserId == userId && !t.IsDeleted).ToListAsync();
         }
 
-        public async Task<bool> UpdateTodoDetailsAsync(int todoId, string title, string description, DateTime deadline)
+        public async Task<bool> UpdateTodoDetailsAsync(int todoId, string title, string description)
         {
             var todo = await _DbContext.Todos.FindAsync(todoId);
             if (todo == null) return false;
 
             todo.Title = title;
             todo.Description = description;
-            todo.Deadline = deadline;
+            
 
             _DbContext.Todos.Update(todo); 
             await _DbContext.SaveChangesAsync();

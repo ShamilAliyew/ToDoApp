@@ -52,6 +52,7 @@ namespace ToDoAppApi.Services
                 throw new Exception("Category already deleted");
             }
             category.IsDeleted = true;
+            _DbContext.Entry(category).State = EntityState.Modified;
             try
             {
                 
