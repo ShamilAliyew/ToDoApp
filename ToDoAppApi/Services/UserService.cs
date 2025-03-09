@@ -63,7 +63,10 @@ namespace ToDoAppApi.Services
 
         public async Task<User> LoginAsync(string identifier, string password)
         {
-            var user = await _DbContext.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
+            var user = await _DbContext.Users
+                .Include(u=>u.Categories)
+                .Include(u=>u.Todos)
+                .FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
             if(user==null || !VerifyPassword(password, user.Password))
             {
                 throw new Exception("Invalid Email of Username");
