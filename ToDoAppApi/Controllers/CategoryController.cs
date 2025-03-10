@@ -17,23 +17,32 @@ namespace ToDoAppApi.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpPost("add/{userId}")]
-        public async Task<ActionResult<Category>> AddCategory([FromRoute] int userId,[FromBody] CategoryDTO categoryDto)
+        [HttpPost("add")]
+        public async Task<ActionResult<Category>> AddCategory([FromBody] CategoryDTO categoryDto)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You must be logged in to add a category" });
+            }
+
             if (categoryDto == null || string.IsNullOrWhiteSpace(categoryDto.Name))
             {
                 return BadRequest("Category name is required");
             }
+
             try
             {
-                var createdCategory = await _categoryService.AddCategoryAsync(userId,categoryDto.Name);
+               
+                var createdCategory = await _categoryService.AddCategoryAsync(userId.Value, categoryDto.Name);
                 return Ok(createdCategory);
-
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCategory([FromRoute] int id)
