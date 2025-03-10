@@ -25,9 +25,6 @@ namespace ToDoAppApi.Controllers
             try
             {
                 var newUser = await _userService.AddUserAsync(userDto);
-                HttpContext.Session.SetInt32("UserId", newUser.Id);
-                HttpContext.Session.SetString("Username", newUser.Username);
-                HttpContext.Session.SetString("Email", newUser.Email);
                 return Ok(newUser);
             }
             catch (Exception ex)
@@ -46,9 +43,6 @@ namespace ToDoAppApi.Controllers
             try
             {
                 var user = await _userService.LoginAsync(userLoginDTO.identifier, userLoginDTO.password);
-                HttpContext.Session.SetInt32("UserId", user.Id);
-                HttpContext.Session.SetString("Username", user.Username);
-                HttpContext.Session.SetString("Email", user.Email);
                 return Ok(user);
             }catch(Exception ex)
             {
@@ -56,10 +50,11 @@ namespace ToDoAppApi.Controllers
             }
         }
 
-        [HttpGet("get/{userId}")]
-        public async Task<ActionResult<User>> GetUserById(int userId)
+        [HttpGet("get")]
+        public async Task<ActionResult<User>> GetUserById()
         {
-            var user = await _userService.GetUserByIdAsync(userId);
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var user = await _userService.GetUserByIdAsync(userId.Value);
 
             if (user == null)
             {
@@ -68,13 +63,7 @@ namespace ToDoAppApi.Controllers
             return Ok(user);
         }
 
-        [HttpPost("logout")]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-
-            return Ok(new { message = "User logged out successfully" });
-        }
+        
 
 
 

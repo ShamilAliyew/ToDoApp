@@ -71,6 +71,11 @@ namespace ToDoAppApi.Services
             return true; 
         }
 
+        public async Task<List<Category>> GetUserCategoriesAsync(int userId)
+        {
+            return await _DbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
+        }
+
         public async Task<Category> UpdateCategoryNameAsync(int categoryId, string name)
         {
             var category = await _DbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
@@ -91,6 +96,16 @@ namespace ToDoAppApi.Services
                 }
             }
             return category;
+        }
+
+        public async Task<Category> GetCategoryByIdAsync(int categoryId, int userId)
+        {
+            
+            var category = await _dbContext.Categories
+                .Where(c => c.Id == categoryId && c.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            return category; 
         }
     }
 }

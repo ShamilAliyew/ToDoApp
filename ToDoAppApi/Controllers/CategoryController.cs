@@ -20,11 +20,6 @@ namespace ToDoAppApi.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<Category>> AddCategory([FromBody] CategoryDTO categoryDto)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "You must be logged in to add a category" });
-            }
 
             if (categoryDto == null || string.IsNullOrWhiteSpace(categoryDto.Name))
             {
@@ -33,8 +28,9 @@ namespace ToDoAppApi.Controllers
 
             try
             {
-               
-                var createdCategory = await _categoryService.AddCategoryAsync(userId.Value, categoryDto.Name);
+
+                var createdCategory = await _categoryService.AddCategoryAsync(categoryDto.UserId, categoryDto.Name);
+
                 return Ok(createdCategory);
             }
             catch (Exception ex)
@@ -44,43 +40,87 @@ namespace ToDoAppApi.Controllers
         }
 
 
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteCategory([FromRoute] int id)
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteCategory([FromBody] DeleteCategoryRequest request)
         {
-            if (id == null)
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+
+            if (userId == null)
             {
-                throw new Exception("Id is required");
+                return Unauthorized(new { message = "You must be logged in to delete a category" });
             }
+
+
+            var categoryId = request.CategoryId;
+
+
+            var categoryToDelete = await _categoryService.GetCategoryByIdAsync(categoryId, userId.Value);
+
+
+            if (categoryToDelete == null)
+            {
+                return NotFound(new { message = "Category not found" });
+            }
+
             try
             {
-                _categoryService.DeleteCategoryAsync(id);
-                return Ok("Category Deleted");
-            }catch(Exception ex)
+
+                var result = await _categoryService.DeleteCategoryAsync(categoryToDelete.Id);
+
+
+                return result ? Ok("Category deleted") : BadRequest("Category could not be deleted");
+            }
+            catch (Exception ex)
             {
+
                 return BadRequest(new { message = ex.Message });
             }
         }
-        [HttpPut("update/{categoryId}")]
-        public async Task<ActionResult<Category>> UpdateCategoryName([FromRoute] int categoryId, [FromBody] string name)
+
+        [HttpPut("update")]
+        public async Task<ActionResult<Category>> UpdateCategoryName([FromBody] UpdateCategoryRequest request)
         {
-            if(name == null)
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+
+            if (userId == null)
             {
-                throw new Exception("Category name Required");
+                return Unauthorized(new { message = "You must be logged in to update a category" });
             }
+
+
+            var categoryId = request.CategoryId;
+            var name = request.Name;
+
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest(new { message = "Category name is required" });
+            }
+
+
+            var categoryToUpdate = await _categoryService.GetCategoryByIdAsync(categoryId, userId.Value);
+
+
+            if (categoryToUpdate == null)
+            {
+                return NotFound(new { message = "Category not found" });
+            }
+
             try
             {
-                
-                var updatedCategory = await _categoryService.UpdateCategoryNameAsync(categoryId, name);
 
-                
+                var updatedCategory = await _categoryService.UpdateCategoryNameAsync(categoryToUpdate.Id, name);
+
+
                 return Ok(updatedCategory);
             }
             catch (Exception ex)
             {
-                
-                return NotFound(new { message = ex.Message });
+
+                return BadRequest(new { message = ex.Message });
             }
         }
-
     }
 }

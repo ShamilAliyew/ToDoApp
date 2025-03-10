@@ -4,34 +4,28 @@ using ToDoAppApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS konfiqurasiyası
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", policy =>
     {
-        policy.AllowAnyOrigin()  // Hər yerdən gələn istəklərə icazə verir
-              .AllowAnyMethod()  // Hər hansı HTTP metodunu (GET, POST və s.) qəbul edir
-              .AllowAnyHeader(); // Hər hansı başlıqla gələn istəklərə icazə verir
+        policy.AllowAnyOrigin()  
+              .AllowAnyMethod()  
+              .AllowAnyHeader();
     });
 });
 
-// Kestrel server konfiqurasiyası
+
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5000); // HTTP
+    options.ListenAnyIP(5000); 
     options.ListenAnyIP(7116, listenOptions => listenOptions.UseHttps()); // HTTPS
 });
 
-// Add services to the container.
+
 builder.WebHost.UseUrls("http://localhost:5000");
 
-// Sessiya üçün konfiqurasiya
-builder.Services.AddDistributedMemoryCache(); // Sessiya məlumatlarını yaddaşda saxlamaq üçün
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Sessiyanın müddəti
-    options.Cookie.HttpOnly = true;  // Cookie'yi yalnız serverdə oxumaq üçün
-});
+
 
 builder.Services.AddControllers();
 
@@ -60,8 +54,7 @@ var app = builder.Build();
 // Static files üçün konfiqurasiya
 app.UseStaticFiles();
 
-// Sessiya istifadəsi üçün əlavə
-app.UseSession();  // Sessiyanı aktiv etmək üçün
+
 
 // HTTP request pipeline
 if (app.Environment.IsDevelopment())
