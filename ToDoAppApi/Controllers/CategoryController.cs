@@ -43,30 +43,10 @@ namespace ToDoAppApi.Controllers
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteCategory([FromBody] DeleteCategoryRequest request)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-
-
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "You must be logged in to delete a category" });
-            }
-
-
-            var categoryId = request.CategoryId;
-
-
-            var categoryToDelete = await _categoryService.GetCategoryByIdAsync(categoryId, userId.Value);
-
-
-            if (categoryToDelete == null)
-            {
-                return NotFound(new { message = "Category not found" });
-            }
-
             try
             {
 
-                var result = await _categoryService.DeleteCategoryAsync(categoryToDelete.Id);
+                var result = await _categoryService.DeleteCategoryAsync(request.UserId,request.CategoryId);
 
 
                 return result ? Ok("Category deleted") : BadRequest("Category could not be deleted");
@@ -81,39 +61,15 @@ namespace ToDoAppApi.Controllers
         [HttpPut("update")]
         public async Task<ActionResult<Category>> UpdateCategoryName([FromBody] UpdateCategoryRequest request)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-
-
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "You must be logged in to update a category" });
-            }
-
-
-            var categoryId = request.CategoryId;
-            var name = request.Name;
-
-
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(request.Name))
             {
                 return BadRequest(new { message = "Category name is required" });
-            }
-
-
-            var categoryToUpdate = await _categoryService.GetCategoryByIdAsync(categoryId, userId.Value);
-
-
-            if (categoryToUpdate == null)
-            {
-                return NotFound(new { message = "Category not found" });
             }
 
             try
             {
 
-                var updatedCategory = await _categoryService.UpdateCategoryNameAsync(categoryToUpdate.Id, name);
-
-
+                var updatedCategory = await _categoryService.UpdateCategoryNameAsync(request.UserID, request.CategoryId, request.Name);
                 return Ok(updatedCategory);
             }
             catch (Exception ex)

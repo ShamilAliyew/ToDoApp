@@ -61,6 +61,16 @@ namespace ToDoAppApi.Services
             return user;
         }
 
+        public async Task<List<Category>> GetUserCategoriesAsync(int userId)
+        {
+            var userCategories = await _DbContext.Categories.Where(c => c.UserId == userId && c.IsDeleted==false).Include(c => c.Todos).ToListAsync();
+            if(userCategories == null || userCategories.Count == 0)
+            {
+                throw new Exception(" No cateqories fount for this user");
+            }
+            return userCategories;
+        }
+
         public async Task<User> LoginAsync(string identifier, string password)
         {
             var user = await _DbContext.Users

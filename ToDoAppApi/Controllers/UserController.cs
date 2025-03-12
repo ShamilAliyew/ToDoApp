@@ -13,7 +13,7 @@ namespace ToDoAppApi.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService) 
         {
             _userService = userService;
         }
@@ -50,20 +50,26 @@ namespace ToDoAppApi.Controllers
             }
         }
 
-        [HttpGet("get")]
-        public async Task<ActionResult<User>> GetUserById()
+        //[HttpGet("get")]
+        //public async Task<ActionResult<User>> GetUserById()
+        //{
+            
+        //    var user = await _userService.GetUserByIdAsync(userId.Value);
+
+        //    if (user == null)
+        //    {
+        //        return NotFound(new { message = "User not found." });
+        //    }
+        //    return Ok(user);
+        //}
+
+        [HttpGet("get/usercategories")]
+        public async Task<ActionResult<List<Category>>>GetUserCategories(int UserId)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            var user = await _userService.GetUserByIdAsync(userId.Value);
+            var categories = await _userService.GetUserCategoriesAsync(UserId);
 
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found." });
-            }
-            return Ok(user);
+            return Ok(categories);
         }
-
-        
 
 
 

@@ -40,9 +40,9 @@ namespace ToDoAppApi.Services
             return category;
         }
 
-        public async Task<bool> DeleteCategoryAsync(int categoryId)
+        public async Task<bool> DeleteCategoryAsync(int userID, int categoryId)
         {
-            var category = await _DbContext.Categories.FindAsync(categoryId);
+            var category = await _DbContext.Categories.FirstOrDefaultAsync(c=> c.UserId==userID && c.Id==categoryId);
             if(category == null)
             {
                 throw new Exception("Category not found"); 
@@ -76,9 +76,9 @@ namespace ToDoAppApi.Services
             return await _DbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
         }
 
-        public async Task<Category> UpdateCategoryNameAsync(int categoryId, string name)
+        public async Task<Category> UpdateCategoryNameAsync(int userId, int categoryId, string name)
         {
-            var category = await _DbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            var category = await _DbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId && c.UserId==userId);
             category.CategoryName = name;
             try {
                 _DbContext.Entry(category).State = EntityState.Modified;
@@ -101,7 +101,7 @@ namespace ToDoAppApi.Services
         public async Task<Category> GetCategoryByIdAsync(int categoryId, int userId)
         {
             
-            var category = await _dbContext.Categories
+            var category = await _DbContext.Categories
                 .Where(c => c.Id == categoryId && c.UserId == userId)
                 .FirstOrDefaultAsync();
 

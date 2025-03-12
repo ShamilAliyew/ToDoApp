@@ -19,10 +19,7 @@ namespace ToDoAppApi.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<Todo>> AddTask( [FromBody] TodoDTO todoDto)
         {
-
-            var userId = HttpContext.Session.GetInt32("UserId");
-            var categoryId = HttpContext.Session.GetInt32("CategoryId");
-            var createdTask = await _taskService.AddTodoAsync(userId.Value, categoryId.Value, todoDto.Title, todoDto.Description);
+            var createdTask = await _taskService.AddTodoAsync(todoDto.UserId,todoDto.CategoryId, todoDto.Title, todoDto.Description);
             return Ok(createdTask);
         }
 
