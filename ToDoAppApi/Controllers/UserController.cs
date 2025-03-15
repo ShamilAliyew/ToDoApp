@@ -50,23 +50,11 @@ namespace ToDoAppApi.Controllers
             }
         }
 
-        //[HttpGet("get")]
-        //public async Task<ActionResult<User>> GetUserById()
-        //{
-            
-        //    var user = await _userService.GetUserByIdAsync(userId.Value);
 
-        //    if (user == null)
-        //    {
-        //        return NotFound(new { message = "User not found." });
-        //    }
-        //    return Ok(user);
-        //}
-
-        [HttpGet("get/usercategories")]
-        public async Task<ActionResult<List<Category>>>GetUserCategories(int UserId)
+        [HttpGet("get/usercategories/{userId}")]
+        public async Task<ActionResult<List<Category>>>GetUserCategories([FromRoute] int userId)
         {
-            var categories = await _userService.GetUserCategoriesAsync(UserId);
+            var categories = await _userService.GetUserCategoriesAsync(userId);
 
             return Ok(categories);
         }
